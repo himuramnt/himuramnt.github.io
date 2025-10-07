@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manutenção Preventiva - Técnicos de Campo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #f7f9fc;
+      --text-color: #2d3436;
+      --card-color: #ffffff;
+      --item-bg: #ecf0f1;
+      --accent-color: #0984e3;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+    }
+
+    body.dark {
+      --bg-color: #121212;
+      --text-color: #f5f6fa;
+      --card-color: #1e1e1e;
+      --item-bg: #2c2c2c;
+      --accent-color: #74b9ff;
+      --shadow-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 30px auto;
+      padding: 20px;
+      background: var(--card-color);
+      border-radius: 10px;
+      box-shadow: 0 5px 20px var(--shadow-color);
+      transition: background 0.4s;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+      transition: color 0.4s;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 5px;
+      border: 1px solid #dfe6e9;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #f1f2f6;
+      color: #2d3436;
+      box-sizing: border-box;
+    }
+
+    body.dark input,
+    body.dark select,
+    body.dark textarea {
+      background: #2c2c2c;
+      color: #f5f6fa;
+      border: 1px solid #555;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .buttons {
+      margin-top: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      min-width: 150px;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, var(--accent-color), #74b9ff);
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+      opacity: 0.9;
+    }
+
+    .item-block {
+      padding: 15px;
+      margin-top: 15px;
+      background: var(--item-bg);
+      border-radius: 8px;
+      position: relative;
+      transition: background 0.4s;
+    }
+
+    #registrosSalvos {
+      margin-top: 40px;
+    }
+
+    .btn-small {
+      padding: 8px 12px;
+      font-size: 14px;
+      margin-top: 8px;
+      background: #636e72;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-small:hover {
+      opacity: 0.8;
+    }
+
+    .dias-label {
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-top: 5px;
+      display: block;
+    }
+
+    .dias-label strong {
+      color: var(--text-color);
+    }
+
+    /* Botão de tema */
+    .theme-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px var(--shadow-color);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(20deg) scale(1.1);
+      opacity: 0.9;
+    }
+
+    /* ======== MOBILE OPTIMIZATION ======== */
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      input, select, textarea {
+        font-size: 16px;
+      }
+
+      .btn-small {
+        width: 100%;
+        text-align: center;
+      }
+
+      .theme-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .item-block {
+        padding: 12px;
+      }
+    }
+	.sub-info {
+  text-align: center;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: #636e72;
+  background: rgba(9, 132, 227, 0.08);
+  border-left: 4px solid var(--accent-color);
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: -10px auto 25px auto;
+  max-width: 800px;
+  line-height: 1.4;
+}
+
+body.dark .sub-info {
+  background: rgba(116, 185, 255, 0.1);
+  color: #b2bec3;
+  border-left-color: var(--accent-color);
+}
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeBtn" title="Alternar tema">🌙</button>
+
+  <div class="container">
+    <h1>Manutenção Preventiva</h1>
+	<p class="sub-info">
+  ⚠️ Este formulário não substituirá a obrigatoriedade de preenchimento da Ordem de Serviço.  
+  Ele tem como objetivo manter o controle e organização da manutenção preventiva e o compartilhamento das informações entre os técnicos.
+</p>
+    <form id="formPreventiva">
+      <label>Condomínio:</label>
+      <input type="text" id="condominio" required>
+
+      <label>Técnico responsável:</label>
+      <input type="text" id="tecnico" required>
+
+      <label>Data da manutenção:</label>
+      <input type="date" id="data" required>
+
+      <hr>
+      <h2>DVRs</h2>
+      <div id="dvrs"></div>
+      <button type="button" class="btn" onclick="adicionarDVR()">Adicionar DVR</button>
+
+      <hr>
+      <h2>Equipamentos</h2>
+      <div id="equipamentos"></div>
+      <button type="button" class="btn" onclick="adicionarEquipamento()">Adicionar Equipamento</button>
+
+      <label>Observações Gerais:</label>
+      <textarea id="observacoes" rows="4"></textarea>
+
+      <div class="buttons">
+        <button type="button" class="btn" onclick="salvar()">Salvar Localmente</button>
+        <button type="button" class="btn" onclick="gerarPDF()">Gerar PDF</button>
+      </div>
+    </form>
+
+    <div id="registrosSalvos">
+      <h2>Manutenções Salvas</h2>
+      <div id="listaRegistros"></div>
+    </div>
+  </div>
+
+  <script>
+    // Alternância de tema
+    const themeBtn = document.getElementById("themeBtn");
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      const isDark = document.body.classList.contains("dark");
+      themeBtn.textContent = isDark ? "☀️" : "🌙";
+      localStorage.setItem("tema", isDark ? "dark" : "light");
+    }
+    if (localStorage.getItem("tema") === "dark") {
+      document.body.classList.add("dark");
+      themeBtn.textContent = "☀️";
+    }
+    themeBtn.addEventListener("click", toggleTheme);
+
+    // Principal
+    const dvrsContainer = document.getElementById('dvrs');
+    const equipamentosContainer = document.getElementById('equipamentos');
+    const listaRegistros = document.getElementById('listaRegistros');
+    let registros = JSON.parse(localStorage.getItem('registros')) || [];
+
+    function adicionarDVR() {
+      const div = document.createElement('div');
+      div.className = 'item-block';
+      div.innerHTML = `
+        <label>IP do DVR:</label>
+        <input type="text" placeholder="Ex: 192.168.0.10">
+        <label>Data Início da Gravação:</label>
+        <input type="date" class="inicio">
+        <label>Data Fim da Gravação:</label>
+        <input type="date" class="fim">
+        <span class="dias-label">Período de gravação: <strong class="dias">0 dias</strong></span>
+        <label>Qtd. Canais:</label>
+        <input type="number">
+        <label>Tamanho do HD (TB):</label>
+        <input type="number">
+        <label>Qtd. Câmeras acesas:</label>
+        <input type="number">
+        <label>Canais apagados (se houver):</label>
+        <input type="text">
+        <button class="btn" onclick="this.parentElement.remove()">Remover</button>
+      `;
+      const inicio = div.querySelector('.inicio');
+      const fim = div.querySelector('.fim');
+      const diasSpan = div.querySelector('.dias');
+      function atualizarDias() {
+        const d1 = new Date(inicio.value);
+        const d2 = new Date(fim.value);
+        if (inicio.value && fim.value && d2 >= d1) {
+          const diff = Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+          diasSpan.textContent = diff + " dias";
+        } else {
+          diasSpan.textContent = "0 dias";
+        }
+      }
+      inicio.addEventListener('change', atualizarDias);
+      fim.addEventListener('change', atualizarDias);
+      dvrsContainer.appendChild(div);
+    }
+
+    function adicionarEquipamento() {
+      const div = document.createElement('div');
+      div.className = 'item-block';
+      div.innerHTML = `
+        <label>Tipo de Equipamento:</label>
+        <select>
+          <option value="Nobreak">Nobreak</option>
+          <option value="Alarme">Alarme</option>
+          <option value="Incêndio">Incêndio</option>
+          <option value="Automação Portão">Automação Portão</option>
+          <option value="Cancela">Cancela</option>
+          <option value="Facial">Facial</option>
+          <option value="Catraca">Catraca</option>
+        </select>
+        <label>Observações:</label>
+        <input type="text">
+        <button class="btn" onclick="this.parentElement.remove()">Remover</button>
+      `;
+      equipamentosContainer.appendChild(div);
+    }
+
+    function salvar() {
+      const obj = {
+        condominio: document.getElementById('condominio').value,
+        tecnico: document.getElementById('tecnico').value,
+        data: document.getElementById('data').value,
+        observacoes: document.getElementById('observacoes').value,
+        dvrs: [],
+        equipamentos: []
+      };
+
+      dvrsContainer.querySelectorAll('.item-block').forEach(div => {
+        const inputs = div.querySelectorAll('input');
+        const inicio = div.querySelector('.inicio').value;
+        const fim = div.querySelector('.fim').value;
+        let dias = 0;
+        if (inicio && fim) {
+          const d1 = new Date(inicio);
+          const d2 = new Date(fim);
+          dias = Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+        }
+
+        obj.dvrs.push({
+          ip: inputs[0].value,
+          inicio,
+          fim,
+          dias,
+          canais: inputs[3].value,
+          hd: inputs[4].value,
+          acesas: inputs[5].value,
+          apagadas: inputs[6].value
+        });
+      });
+
+      equipamentosContainer.querySelectorAll('.item-block').forEach(div => {
+        const tipo = div.querySelector('select').value;
+        const obs = div.querySelector('input[type="text"]').value;
+        obj.equipamentos.push({ nome: tipo, obs });
+      });
+
+      registros.push(obj);
+      localStorage.setItem('registros', JSON.stringify(registros));
+      listarRegistros();
+      alert("Registro salvo com sucesso!");
+      document.getElementById("formPreventiva").reset();
+      dvrsContainer.innerHTML = '';
+      equipamentosContainer.innerHTML = '';
+    }
+
+    function listarRegistros() {
+      listaRegistros.innerHTML = '';
+      registros.forEach((r, i) => {
+        const div = document.createElement('div');
+        div.className = 'item-block';
+        div.innerHTML = `
+          <strong>${r.condominio}</strong><br>
+          Técnico: ${r.tecnico}<br>
+          Data: ${formatarDataBR(r.data)}<br>
+          DVRs: ${r.dvrs.length} / Equipamentos: ${r.equipamentos.length}<br>
+          <button class="btn-small" onclick="editarRegistro(${i})">Editar</button>
+          <button class="btn-small" onclick="excluirRegistro(${i})">Remover</button>
+        `;
+        listaRegistros.appendChild(div);
+      });
+    }
+
+    function editarRegistro(index) {
+      const r = registros[index];
+      document.getElementById('condominio').value = r.condominio;
+      document.getElementById('tecnico').value = r.tecnico;
+      document.getElementById('data').value = r.data;
+      document.getElementById('observacoes').value = r.observacoes;
+      dvrsContainer.innerHTML = '';
+      equipamentosContainer.innerHTML = '';
+      r.dvrs.forEach(dvr => {
+        adicionarDVR();
+        const div = dvrsContainer.lastElementChild;
+        const inputs = div.querySelectorAll('input');
+        inputs[0].value = dvr.ip;
+        div.querySelector('.inicio').value = dvr.inicio;
+        div.querySelector('.fim').value = dvr.fim;
+        div.querySelector('.dias').textContent = dvr.dias + " dias";
+        inputs[3].value = dvr.canais;
+        inputs[4].value = dvr.hd;
+        inputs[5].value = dvr.acesas;
+        inputs[6].value = dvr.apagadas;
+      });
+      r.equipamentos.forEach(eq => {
+        adicionarEquipamento();
+        const div = equipamentosContainer.lastElementChild;
+        div.querySelector('select').value = eq.nome;
+        div.querySelector('input[type="text"]').value = eq.obs;
+      });
+      registros.splice(index, 1);
+      localStorage.setItem('registros', JSON.stringify(registros));
+      listarRegistros();
+    }
+
+    function excluirRegistro(index) {
+      if (confirm('Deseja remover este registro?')) {
+        registros.splice(index, 1);
+        localStorage.setItem('registros', JSON.stringify(registros));
+        listarRegistros();
+      }
+    }
+
+    function gerarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 10;
+      let y = margin;
+
+      registros.forEach((r, idxReg) => {
+        doc.setFontSize(12);
+        doc.text(`Condomínio: ${r.condominio}`, margin, y); y += 8;
+        doc.text(`Técnico: ${r.tecnico}`, margin, y); y += 8;
+        doc.text(`Data: ${formatarDataBR(r.data)}`, margin, y); y += 8;
+        doc.text(`Observações:`, margin, y); y += 6;
+
+        const obsText = doc.splitTextToSize(r.observacoes || "-", pageWidth - 2 * margin);
+        doc.text(obsText, margin, y);
+        y += obsText.length * 6 + 4;
+
+        r.dvrs.forEach((dvr, i) => {
+          const linhaDVR =
+            `DVR ${i + 1}: IP ${dvr.ip || '-'}, ${formatarDataBR(dvr.inicio)} até ${formatarDataBR(dvr.fim)} (${dvr.dias} dias), ` +
+            `${dvr.canais} canais, ${dvr.hd} TB, ${dvr.acesas} câmeras acesas, canais apagados: ${dvr.apagadas || '-'}`;
+          const dvrText = doc.splitTextToSize(linhaDVR, pageWidth - 2 * margin);
+          doc.text(dvrText, margin, y);
+          y += dvrText.length * 6 + 2;
+          if (y > 270) { doc.addPage(); y = margin; }
+        });
+
+        r.equipamentos.forEach((eq, i) => {
+          const linhaEq = `Equipamento ${i + 1}: ${eq.nome} - ${eq.obs || '-'}`;
+          const eqText = doc.splitTextToSize(linhaEq, pageWidth - 2 * margin);
+          doc.text(eqText, margin, y);
+          y += eqText.length * 6 + 2;
+          if (y > 270) { doc.addPage(); y = margin; }
+        });
+
+        y += 8;
+        if (idxReg < registros.length - 1) {
+          doc.setDrawColor(200);
+          doc.line(margin, y, pageWidth - margin, y);
+          y += 8;
+        }
+        if (y > 270) { doc.addPage(); y = margin; }
+      });
+
+      doc.save("manutencao_preventiva.pdf");
+    }
+
+    function formatarDataBR(data) {
+      if (!data) return '';
+      const [ano, mes, dia] = data.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    listarRegistros();
+  </script>
+</body>
+</html>
